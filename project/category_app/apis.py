@@ -5,11 +5,22 @@ from .serializers import CategorySerializers
 from utils.response_utils import success_create, success_retrieve, success_update, success_delete
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
+from . import repositories
+
 
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Category.objects.all()
+    category_repository : repositories.CategoryRepository = repositories.CategoryRepository()
     serializer_class = CategorySerializers
     permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get_queryset(self):
+        company = self.request.user.company_set.first()
+        if company:
+            return self.category_repository.find_by_company(company=company)
+        else:
+            return self.category_repository.find_by_company(company=None)
+
+
 
     def list(self, request, *args, **kwargs):
         return success_retrieve(

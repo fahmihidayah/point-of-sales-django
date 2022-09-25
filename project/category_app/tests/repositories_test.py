@@ -9,4 +9,4 @@ class RepositoryTestCase(CategoryBaseTestCase):
         self.assertIsNotNone(self.category_repository.get_by_name(name="food"))
 
     def test_find_by_name_false(self):
-        self.assertIsNone(self.category_repository.get_by_name(name='drink'))
+        self.assertEqual(1, self.category_repository.find_by_company(company=self.company).count())
