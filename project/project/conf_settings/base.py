@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'order_item_app',
     'rest_framework_swagger',
     'config_app',
+    'company_app',
 ]
 
 MIDDLEWARE = [

@@ -31,6 +31,7 @@ urlpatterns = [
     path('', include('order_item_app.urls')),
     path('', include('transaction_app.urls')),
     path('', include('config_app.urls')),
+    path('', include('config_app.urls')),
     path('swager', schema_view),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]
