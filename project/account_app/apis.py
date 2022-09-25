@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .models import UserModel
-from .serializers import UserSerializer, CreateUserSerializer, LoginSerializer
+from .serializers import UserSerializer, CreateUserSerializer, LoginSerializer, CreateUserAndCompanySerializer
 from project.api_utils import get_response, get_error_response
 from rest_framework.authtoken.models import Token
 
@@ -45,6 +45,19 @@ class LoginApiView(ObtainAuthToken):
 class RegisterApiView(generics.CreateAPIView):
     authentication_classes = []
     serializer_class = CreateUserSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=False):
+            serializer.create(serializer.validated_data)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class RegisterUserAndCompanyApiView(generics.CreateAPIView):
+
+    authentication_classes = []
+    serializer_class = CreateUserAndCompanySerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

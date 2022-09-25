@@ -1,15 +1,16 @@
 from .base_setup_test import AccountBaseSetupTestCase
 from account_app.repositories import UserRepository
-from account_app.serializers import CreateUserSerializer
+from account_app.serializers import CreateUserSerializer, CreateUserAndCompanySerializer
+
 
 class SerializerTestCase(AccountBaseSetupTestCase):
 
     def setUp(self) -> None:
         super(SerializerTestCase, self).setUp()
-        self.user_repository : UserRepository = UserRepository()
+        self.user_repository: UserRepository = UserRepository()
 
     def test_valid_user_and_profile_true(self):
-        serializer : CreateUserSerializer = CreateUserSerializer(data={
+        serializer: CreateUserSerializer = CreateUserSerializer(data={
             "email": "fahmi.test@gmail.com",
             "phone": "0812311111",
             "password": "123456789",
@@ -37,12 +38,29 @@ class SerializerTestCase(AccountBaseSetupTestCase):
         })
         if serializer.is_valid():
             serializer.create(serializer.validated_data)
+        try:
+            serializer: CreateUserSerializer = CreateUserSerializer(data={
+                "email": "fahmi.test.123@gmail.com",
+                "phone": "08123444444",
+                "password": "123456789",
+                "name": "fahmi test"
+            })
+            self.assertFalse(serializer.is_valid())
+        except:
+            self.assertTrue(True)
 
-        serializer: CreateUserSerializer = CreateUserSerializer(data={
-            "email": "fahmi.test.123@gmail.com",
-            "phone": "08123444444",
+
+    def test_valid_user_profile_and_company_true(self):
+        serializer: CreateUserAndCompanySerializer = CreateUserAndCompanySerializer(data={
+            "email": "fahmi.company@gmail.com",
+            "phone": "0811223344",
             "password": "123456789",
-            "name": "fahmi test"
+            "name": "fahmi company",
+            'company_name' : "fahmi company",
+            'company_description' : 'fahmi company description'
         })
-        self.assertFalse(serializer.is_valid())
+        data = None
+        if serializer.is_valid():
+            data = serializer.create(serializer.validated_data)
 
+        self.assertIsNotNone(data)

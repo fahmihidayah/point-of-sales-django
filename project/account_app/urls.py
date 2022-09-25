@@ -17,5 +17,6 @@ urlpatterns = [
     path('api/v1/login', apis.LoginApiView.as_view(), name='api_v1_login'),
     path('api/v1/logout', apis.LogoutApiView.as_view(), name='api_v1_logout'),
     path('api/v1/register', apis.RegisterApiView.as_view(), name='api_v1_register'),
+    path('api/v1/register/user_and_company', apis.RegisterUserAndCompanyApiView.as_view(), name='api_v1_company_register'),
     path('api/v1/user', apis.UserDetailApiView.as_view(), name='api_v1_user'),
 ]
