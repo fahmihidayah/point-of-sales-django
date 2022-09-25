@@ -7,7 +7,6 @@ class CategoryRepository :
         self.manager : Manager = Category.objects
         self.default_query = self.manager.all()
 
-
     def find_all(self) -> QuerySet:
         return self.default_query
 

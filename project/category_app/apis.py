@@ -13,14 +13,17 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CategorySerializers
     permission_classes = [IsAuthenticated, IsAdminUser]
 
+    def get_serializer_context(self):
+        context = super(CategoryListCreateAPIView, self).get_serializer_context()
+        context['user'] = self.request.user
+        return context
+
     def get_queryset(self):
         company = self.request.user.company_set.first()
         if company:
             return self.category_repository.find_by_company(company=company)
         else:
             return self.category_repository.find_by_company(company=None)
-
-
 
     def list(self, request, *args, **kwargs):
         return success_retrieve(
