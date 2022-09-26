@@ -43,9 +43,21 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 
 
 class CategoryRetrieveUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializers
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    category_repository : repositories.CategoryRepository = repositories.CategoryRepository()
+    serializer_class = CategoryReadSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer(self, *args, **kwargs):
+        serializer = super(CategoryRetrieveUpdateDeleteAPIView, self).get_serializer(*args, **kwargs)
+        serializer.user = self.request.user
+        return serializer
+
+    def get_queryset(self):
+        company = self.request.user.company_set.first()
+        if company:
+            return self.category_repository.find_by_company(company=company)
+        else:
+            return self.category_repository.find_by_company(company=None)
 
     def retrieve(self, request, *args, **kwargs):
         return success_retrieve(
