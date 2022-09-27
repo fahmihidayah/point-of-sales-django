@@ -4,7 +4,7 @@ from .models import Category
 from .serializers import CategorySerializers, CategoryReadSerializers
 from utils.response_utils import success_create, success_retrieve, success_update, success_delete
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from . import permissions
 from . import repositories
 
 
@@ -25,6 +25,7 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
         return serializer
 
     def get_queryset(self):
+        # return self.category_repository.find_all()
         company = self.request.user.company_set.first()
         if company:
             return self.category_repository.find_by_company(company=company)
@@ -45,7 +46,7 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 class CategoryRetrieveUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
     category_repository : repositories.CategoryRepository = repositories.CategoryRepository()
     serializer_class = CategoryReadSerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, permissions.IsUserOwnerPermission]
 
     def get_serializer(self, *args, **kwargs):
         serializer = super(CategoryRetrieveUpdateDeleteAPIView, self).get_serializer(*args, **kwargs)
@@ -53,6 +54,7 @@ class CategoryRetrieveUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView)
         return serializer
 
     def get_queryset(self):
+        # return self.category_repository.find_all()
         company = self.request.user.company_set.first()
         if company:
             return self.category_repository.find_by_company(company=company)
