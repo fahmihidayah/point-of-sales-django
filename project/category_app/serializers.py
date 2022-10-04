@@ -24,7 +24,6 @@ class CategorySerializers(ModelSerializer):
         if is_valid and not self.company:
             raise ValidationError({'company': 'Current user has no company'})
 
-
         return is_valid
 
     def create(self, validated_data):

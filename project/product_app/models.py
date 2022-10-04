@@ -2,7 +2,7 @@ from django.db import models
 from category_app.models import Category
 # Create your models here.
 from django.utils.html import mark_safe
-
+from company_app.models import Company
 
 class Product(models.Model):
 
@@ -13,6 +13,8 @@ class Product(models.Model):
     image: models.ImageField = models.ImageField(upload_to='media/', blank=True)
 
     price: models.FloatField = models.FloatField(default=0, blank=True)
+
+    company: models.ForeignKey = models.ForeignKey(to=Company, on_delete=models.CASCADE, default=None)
 
     stock: models.IntegerField = models.IntegerField(default=0, blank=True)
 
