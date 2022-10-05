@@ -12,9 +12,14 @@ class ProductReadSerializer(ModelSerializer):
 class ProductWriteSerializer(ModelSerializer):
 
     def __init__(self, **kwargs):
-        super(ProductWriteSerializer, self).__init__(**kwargs)
         self.user = None
         self.company = None
+        if 'user' in kwargs:
+            self.user = kwargs.pop('user')
+            self.company = self.user.company_set.first()
+            if self.company:
+                kwargs['data']['company'] = self.company.pk
+        super(ProductWriteSerializer, self).__init__(**kwargs)
 
     def is_valid(self, raise_exception=False):
         is_valid = super(ProductWriteSerializer, self).is_valid(raise_exception=raise_exception)
@@ -38,7 +43,14 @@ class ProductWriteSerializer(ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['pk', 'name', 'description', 'price', 'image', 'stock', 'created_at', 'updated_at']
+        fields = ['pk',
+                  'name',
+                  'description',
+                  'price',
+                  'image',
+                  'stock',
+                  'company',
+                  'created_at', 'updated_at']
 
 
 # Done this test
