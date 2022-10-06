@@ -15,11 +15,13 @@ class BaseProductTestCase(TestCase):
 
     def setUp(self) -> None:
         self.user: UserModel = UserModel.objects.create(username='fahmi', password='123456')
+        self.otherUser : UserModel = UserModel.objects.create(username='other_test', password='111111')
         self.company: Company = Company.objects.create(name='company', description='test', user=self.user)
         self.category: Category = Category.objects.create(name='food', description='Food', company=self.company)
         self.product: Product = Product.objects.create(name='noodle', description='test',
                                                        price=1100.0, company=self.company, stock=10)
         self.token, created = Token.objects.get_or_create(user=self.user)
+        self.otherToken, created = Token.objects.get_or_create(user=self.otherUser)
         self.product.categories.add(self.category)
 
     def test_all_object_not_none(self):

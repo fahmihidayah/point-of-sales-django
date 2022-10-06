@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
 class ApiTestCase(BaseProductTestCase):
 
     def setUp(self) -> None:
@@ -31,5 +32,35 @@ class ApiTestCase(BaseProductTestCase):
                                        'categories': [self.category.pk]
                                    },
                                    format='multipart')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_retrieve_product_success(self):
+        api_client = APIClient()
+
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = api_client.get(reverse("api_v1_product_detail", kwargs={"pk": self.product.pk}), format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_patch_update_product_success(self):
+        api_client = APIClient()
+
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = api_client.patch(reverse("api_v1_product_detail", kwargs={"pk": self.product.pk}), data={
+            'name': 'Barang di update',
+            'description': 'deskripsi'
+        },format='json')
         print(response.data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_product_success(self):
+        api_client = APIClient()
+
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = api_client.delete(reverse("api_v1_product_detail", kwargs={"pk": self.product.pk}), format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_retrieve_product_failure(self):
+        api_client = APIClient()
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.otherToken.key)
+        response = api_client.get(reverse("api_v1_product_detail", kwargs={"pk": self.product.pk}), format='json')
+        self.assertEqual(response.status_code, 404)
