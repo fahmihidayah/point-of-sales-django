@@ -42,6 +42,9 @@ class OrderItemRepository:
         except OrderItem.DoesNotExist:
             return None
 
+    def find_by_company(self, company) -> QuerySet:
+        return self.default_query_set.filter(Q(company__pk=company.pk))
+
     def get_by_product_and_user(self, product_id, user_id) -> OrderItem:
         try:
             return self.default_query_set.get(Q(product__id=product_id) & Q(user__id=user_id))

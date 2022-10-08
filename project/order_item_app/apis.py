@@ -10,10 +10,40 @@ from .repositories import OrderItemRepository
 repository: OrderItemRepository = OrderItemRepository()
 
 
+class OrderItemListCreateAPIView(ListCreateAPIView):
+    serializers = serializers.WriteOrderItemSerializer
+    order_item_repository : OrderItemRepository = OrderItemRepository()
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return serializers.ReadOrderItemSerializer
+        else:
+            return super(OrderItemListCreateAPIView, self).get_serializer_class()
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            kwargs['user'] = self.request.user
+        return super(OrderItemListCreateAPIView, self).get_serializer(*args, **kwargs)
+
+    def get_queryset(self):
+        company = self.request.user.company_set.first()
+        if company:
+            return self.order_item_repository.find_by_company(company=company)
+        else:
+            return self.order_item_repository.find_by_company(company=None)
+
+    def list(self, request, *args, **kwargs):
+        return super(OrderItemListCreateAPIView, self).list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        return super(OrderItemListCreateAPIView, self).create(request, *args, **kwargs)
+
+
 class ListOrderItemV2APIView(ListAPIView):
     serializer_class = serializers.ReadOrderItemSerializer
     queryset = repository.find_all()
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         data_total = repository.get_order_items_and_total(self.request.user)
@@ -32,7 +62,7 @@ class ListOrderItemV2APIView(ListAPIView):
 class ListOrderItemAPIView(ListAPIView):
     serializer_class = serializers.ReadOrderItemSerializer
     queryset = repository.find_all()
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         return success_retrieve(super(ListOrderItemAPIView, self).list(request, *args, **kwargs))
@@ -41,7 +71,7 @@ class ListOrderItemAPIView(ListAPIView):
 class CreateOrderItemAPIView(CreateAPIView):
     serializer_class = serializers.WriteOrderItemSerializer
     queryset = repository.find_all()
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer(self, *args, **kwargs):
         kwargs['user'] = self.request.user
@@ -56,7 +86,7 @@ class CreateOrderItemAPIView(CreateAPIView):
 class UpdateOrderItemOrderItemAPIView(UpdateAPIView):
     serializer_class = serializers.WriteOrderItemSerializer
     queryset = repository.find_all()
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer(self, *args, **kwargs):
         kwargs['user'] = self.request.user
@@ -72,7 +102,7 @@ class UpdateOrderItemOrderItemAPIView(UpdateAPIView):
 class DeleteOrderItemAPIView(DestroyAPIView):
     serializer_class = serializers.WriteOrderItemSerializer
     queryset = repository.find_all()
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
         return success_delete(super(DeleteOrderItemAPIView, self).delete(request, *args, **kwargs))
