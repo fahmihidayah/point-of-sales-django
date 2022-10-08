@@ -1,18 +1,52 @@
 from . import models
-from rest_framework.generics import CreateAPIView, GenericAPIView, ListCreateAPIView, ListAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView, \
+    ListAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from utils.response_utils import success_create, success_retrieve, success_delete
+from utils.response_utils import success_create, success_retrieve, success_delete,success_update
 from . import serializers
 from .repositories import OrderItemRepository
 
 repository: OrderItemRepository = OrderItemRepository()
 
 
+class OrderItemRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.WriteOrderItemSerializer
+    order_item_repository: OrderItemRepository = OrderItemRepository()
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return serializers.ReadOrderItemSerializer
+        else:
+            return super(OrderItemRetrieveUpdateDestroyAPIView, self).get_serializer_class()
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method != 'GET':
+            kwargs['user'] = self.request.user
+        return super(OrderItemRetrieveUpdateDestroyAPIView, self).get_serializer(*args, **kwargs)
+
+    def get_queryset(self):
+        company = self.request.user.company_set.first()
+        if company:
+            return self.order_item_repository.find_by_company(company=company)
+        else:
+            return self.order_item_repository.find_by_company(company=None)
+
+    def update(self, request, *args, **kwargs):
+        return success_update(super(OrderItemRetrieveUpdateDestroyAPIView, self).update(request, *args, **kwargs))
+
+    def delete(self, request, *args, **kwargs):
+        return success_delete(super(OrderItemRetrieveUpdateDestroyAPIView, self).delete(request, *args, **kwargs))
+
+    def retrieve(self, request, *args, **kwargs):
+        return success_retrieve(super(OrderItemRetrieveUpdateDestroyAPIView, self).retrieve(request, *args, **kwargs))
+
+
 class OrderItemListCreateAPIView(ListCreateAPIView):
     serializer_class = serializers.WriteOrderItemSerializer
-    order_item_repository : OrderItemRepository = OrderItemRepository()
+    order_item_repository: OrderItemRepository = OrderItemRepository()
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
