@@ -15,10 +15,15 @@ class WriteOrderItemSerializer(ModelSerializer):
         self.company = None
         if 'user' in kwargs:
             self.user = kwargs.pop('user')
-            self.company = self.user.company_set.first()
             kwargs['data']['user'] = self.user.pk
-            if self.company:
-                kwargs['data']['company'] = self.company.pk
+
+            # self.company = self.user.company_set.first()
+            # if self.company:
+            #     kwargs['data']['company'] = self.company.pk
+
+        if 'company' in kwargs:
+            self.company = kwargs.pop('company')
+            kwargs['data']['company'] = self.company.pk
 
         super(WriteOrderItemSerializer, self).__init__(*args, **kwargs)
 

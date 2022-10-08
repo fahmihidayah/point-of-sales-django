@@ -20,13 +20,14 @@ class TransactionRepositoryTest(base_test.BaseSetupTest):
         order_item = OrderItem.objects.get(pk=self.order_item.pk)
         self.assertEqual(transaction.pk, order_item.transaction.pk)
 
-    def test_failure_craete_transaction_true(self):
-
+    def test_failure_create_transaction_true(self):
         transaction: Transaction = self.transaction_repository.create_transaction(self.user)
         order_item = OrderItem.objects.get(pk=self.order_item.pk)
-
         new_transaction = self.transaction_repository.create_transaction(self.user)
         self.assertIsNone(new_transaction)
+
+    def test_find_transaction_by_company_success(self):
+        self.assertEqual(1, self.transaction_repository.find_by_company(company=self.company).count())
 
 
 

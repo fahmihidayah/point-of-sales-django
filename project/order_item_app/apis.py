@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from utils.response_utils import success_create, success_retrieve, success_delete,success_update
 from . import serializers
 from .repositories import OrderItemRepository
+from product_app.repositories import ProductRepository
 
 repository: OrderItemRepository = OrderItemRepository()
 
@@ -14,6 +15,7 @@ repository: OrderItemRepository = OrderItemRepository()
 class OrderItemRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.WriteOrderItemSerializer
     order_item_repository: OrderItemRepository = OrderItemRepository()
+    product_repository: ProductRepository = ProductRepository()
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
@@ -47,6 +49,7 @@ class OrderItemRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class OrderItemListCreateAPIView(ListCreateAPIView):
     serializer_class = serializers.WriteOrderItemSerializer
     order_item_repository: OrderItemRepository = OrderItemRepository()
+    product_repository: ProductRepository = ProductRepository()
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
@@ -58,6 +61,7 @@ class OrderItemListCreateAPIView(ListCreateAPIView):
     def get_serializer(self, *args, **kwargs):
         if self.request.method == 'POST':
             kwargs['user'] = self.request.user
+            kwargs['company'] = self.product_repository.get_by_id(id=self.request.data['product']).company
         return super(OrderItemListCreateAPIView, self).get_serializer(*args, **kwargs)
 
     def get_queryset(self):

@@ -15,6 +15,9 @@ class TransactionRepository:
     def find_by_user(self, user) -> QuerySet:
         return self.default_query_set.filter(Q(user__pk=user.pk))
 
+    def find_by_company(self, company) -> QuerySet:
+        return self.default_query_set.filter(Q(company__pk=company.pk))
+
     def get_by_id(self, id) -> Transaction:
         return self.default_query_set\
             .prefetch_related(Prefetch("orderitem_set",
@@ -24,6 +27,8 @@ class TransactionRepository:
     def create_invoice_number(self, transaction_id):
         return datetime.now().strftime("%m%d%H%M") + str(transaction_id)
 
+
+    # todo need save company to transaction 
     def create_transaction(self, user):
         if self.order_item_repository.count(user=user) == 0:
             return None

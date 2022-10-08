@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from company_app.models import Company
 
 
 # Create your models here.
@@ -11,6 +12,8 @@ class Transaction(models.Model):
     total: models.FloatField = models.FloatField()
 
     user: models.ForeignKey = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE)
+
+    company: models.ForeignKey = models.ForeignKey(to=Company, on_delete=models.CASCADE, default=None)
 
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 

@@ -13,7 +13,7 @@ transaction_repository : repositories.TransactionRepository = repositories.Trans
 
 class CreateTransactionAPIView(APIView):
 
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         transaction : models.Transaction = transaction_repository.create_transaction(user=request.user)
@@ -31,7 +31,7 @@ class CreateTransactionAPIView(APIView):
 
 class TransactionListAPIView(ListAPIView):
     transaction_repository: repositories.TransactionRepository = repositories.TransactionRepository()
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializers.TransactionSerializer
 
     def get_queryset(self):

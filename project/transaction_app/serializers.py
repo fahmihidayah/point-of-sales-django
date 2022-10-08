@@ -9,10 +9,6 @@ class TransactionSerializer(ModelSerializer):
         model = models.Transaction
         fields = ['pk', 'invoice_number', 'total', 'user', 'created_at', 'updated_at']
 
-
-
-
-
 class TransactionDetailSerializer(ModelSerializer):
 
     order_items = ReadOrderItemSerializer(many=True)
