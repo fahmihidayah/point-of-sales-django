@@ -34,10 +34,20 @@ class OrderItemListCreateAPIView(ListCreateAPIView):
             return self.order_item_repository.find_by_company(company=None)
 
     def list(self, request, *args, **kwargs):
-        return super(OrderItemListCreateAPIView, self).list(request, *args, **kwargs)
+        data_total = repository.get_order_items_and_total(self.request.user)
+        queryset = self.filter_queryset(data_total['order_items'])
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        data_total['order_items'] = queryset
+
+        return success_retrieve(Response(data=serializers.ReadOrderItemWithTotalSerializer(data_total).data))
 
     def create(self, request, *args, **kwargs):
-        return super(OrderItemListCreateAPIView, self).create(request, *args, **kwargs)
+        return success_create(super(OrderItemListCreateAPIView, self).create(request, *args, **kwargs))
 
 
 class ListOrderItemV2APIView(ListAPIView):

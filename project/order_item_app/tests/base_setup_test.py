@@ -5,6 +5,7 @@ from order_item_app.serializers import WriteOrderItemSerializer
 from product_app.models import Product
 from django.contrib.auth import get_user_model
 from company_app.models import Company
+from rest_framework.authtoken.models import Token
 
 UserModel = get_user_model()
 
@@ -19,3 +20,5 @@ class BaseSetupTest(TestCase):
         self.product_two = Product.objects.create(name='celana', description='test', price=100, stock=100, company=self.company)
         self.order_item: OrderItem = OrderItem.objects.create(product=self.product, user=self.user, amount=3, company=self.company)
         self.order_item_repository: OrderItemRepository = OrderItemRepository()
+
+        self.token, created = Token.objects.get_or_create(user=self.user)
