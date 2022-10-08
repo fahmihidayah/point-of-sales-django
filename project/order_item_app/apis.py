@@ -11,7 +11,7 @@ repository: OrderItemRepository = OrderItemRepository()
 
 
 class OrderItemListCreateAPIView(ListCreateAPIView):
-    serializers = serializers.WriteOrderItemSerializer
+    serializer_class = serializers.WriteOrderItemSerializer
     order_item_repository : OrderItemRepository = OrderItemRepository()
     permission_classes = [IsAuthenticated]
 

@@ -13,3 +13,12 @@ class ApiTestCase(BaseSetupTest):
         api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = api_client.get(reverse("api_v2_order_item_list_create"), format='json')
         self.assertEqual(response.status_code, 200)
+
+    def test_post_create_order_item_success(self):
+        api_client = APIClient()
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = api_client.post(reverse("api_v2_order_item_list_create"), data={
+            'product' : self.product.pk,
+            'amount' : 1
+        }, format='json')
+        self.assertEqual(response.status_code, 200)
