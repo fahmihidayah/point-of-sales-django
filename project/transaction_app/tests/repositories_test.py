@@ -27,7 +27,9 @@ class TransactionRepositoryTest(base_test.BaseSetupTest):
         self.assertIsNone(new_transaction)
 
     def test_find_transaction_by_company_success(self):
+        transaction: Transaction = self.transaction_repository.create_transaction(self.user)
         self.assertEqual(1, self.transaction_repository.find_by_company(company=self.company).count())
+
 
 
 

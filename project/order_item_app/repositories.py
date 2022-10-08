@@ -1,5 +1,6 @@
 from .models import OrderItem
 from django.db.models import Manager, QuerySet, Q, Sum, F
+from product_app.models import Product
 
 
 class OrderItemRepository:
@@ -42,6 +43,24 @@ class OrderItemRepository:
         except OrderItem.DoesNotExist:
             return None
 
+    def first_by_user_and_company(self, user, company) -> OrderItem:
+        try:
+            return self.default_query_set\
+                .filter(Q(user=user))\
+                .filter(Q(company=company))\
+                .first()
+        except OrderItem.DoesNotExist:
+            return None
+
+    def first_by_user(self, user) -> OrderItem:
+        try:
+            return self.default_query_set\
+                .filter(Q(user=user))\
+                .select_related('company')\
+                .first()
+        except OrderItem.DoesNotExist:
+            return None
+
     def find_by_company(self, company) -> QuerySet:
         return self.default_query_set.filter(Q(company__pk=company.pk))
 
@@ -58,4 +77,5 @@ class OrderItemRepository:
             order_item.save()
             return order_item
         else:
-            return self.manager.create(product_id=product_id, user_id=user_id, amount=amount)
+            product: Product = Product.objects.get(Q(id=product_id))
+            return self.manager.create(product_id=product_id, user_id=user_id, amount=amount, company=product.company)

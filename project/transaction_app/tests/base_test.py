@@ -15,8 +15,8 @@ class BaseSetupTest(TestCase):
         # pass
         self.user = UserModel.objects.create(email='fahmi@emai.com', username='fahmi', password='123123123')
         self.company = Company.objects.create(name='company', description='company description', user=self.user)
-        self.product = Product.objects.create(name='baju', description='test', price=100, stock=10)
-        self.product_two = Product.objects.create(name='celana', description='test', price=100, stock=100)
+        self.product = Product.objects.create(name='baju', description='test', price=100, stock=10, company=self.company)
+        self.product_two = Product.objects.create(name='celana', description='test', price=100, stock=100, company=self.company)
 
-        self.order_item: OrderItem = OrderItem.objects.create(product=self.product, user=self.user, amount=1)
+        self.order_item: OrderItem = OrderItem.objects.create(product=self.product, user=self.user, amount=1, company=self.company)
         self.order_item_repository: OrderItemRepository = OrderItemRepository()

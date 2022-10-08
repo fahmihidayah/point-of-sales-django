@@ -33,3 +33,10 @@ class OrderItemRepositoryTestCase(BaseSetupTest):
         results = self.order_item_repository.find_all_by_user_as_list(user=self.user)
         self.assertEqual(1, len(results))
 
+    def test_first_by_user_and_company_success(self):
+        order_item = self.order_item_repository.first_by_user_and_company(user=self.user, company=self.company)
+        self.assertIsNotNone(order_item)
+
+    def test_first_by_user_success(self):
+        order_item = self.order_item_repository.first_by_user(user=self.user)
+        self.assertIsNotNone(order_item)

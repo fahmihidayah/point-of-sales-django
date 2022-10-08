@@ -28,14 +28,14 @@ class TransactionRepository:
         return datetime.now().strftime("%m%d%H%M") + str(transaction_id)
 
 
-    # todo need save company to transaction 
     def create_transaction(self, user):
-        if self.order_item_repository.count(user=user) == 0:
+        first_order_item : OrderItem = self.order_item_repository.first_by_user(user=user)
+        if not first_order_item:
             return None
 
         total_data = self.order_item_repository.get_total_cart(user=user)
 
-        transaction = self.manager.create(user=user, total=total_data['total'])
+        transaction = self.manager.create(user=user, total=total_data['total'], company=first_order_item.company)
 
         self.order_item_repository.find_all_by_user(user=user).update(transaction=transaction)
 
