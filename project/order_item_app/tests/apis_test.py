@@ -22,3 +22,23 @@ class ApiTestCase(BaseSetupTest):
             'amount' : 1
         }, format='json')
         self.assertEqual(response.status_code, 200)
+
+    def test_get_order_item_success(self):
+        api_client = APIClient()
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = api_client.get(reverse("api_v2_order_item_retrieve_update_delete", kwargs={'pk' : self.order_item.pk}), format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_patch_order_item_success(self):
+        api_client = APIClient()
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = api_client.patch(reverse("api_v2_order_item_retrieve_update_delete", kwargs={'pk' : self.order_item.pk}), data={
+            'amount' : 3
+        }, format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_order_item_success(self):
+        api_client = APIClient()
+        api_client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = api_client.delete(reverse("api_v2_order_item_retrieve_update_delete", kwargs={'pk' : self.order_item.pk}), format='json')
+        self.assertEqual(response.status_code, 200)
